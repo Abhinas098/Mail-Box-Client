@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
+import Sidebar from "./SideBar";
 
 const Home = () => {
   return (
-    <div>Welcome to your mail Box</div>
-  )
-}
+    <>
+      <Sidebar />
+      <h2 style={{ textAlign: "center" }}>You Have No mail Yet</h2>
+    </>
+  );
+};
 
-export default Home
+export default Home;

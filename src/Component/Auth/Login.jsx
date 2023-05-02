@@ -65,6 +65,7 @@ export default function Login() {
           localStorage.setItem("token", data.idToken);
           dispatch(authActions.isLogin(data.idToken));
         }
+        localStorage.setItem("email", enteredEmail);
         alert("Sucessfull!");
 
         history.replace("./home");
@@ -111,7 +112,7 @@ export default function Login() {
 
                   <div className="text-center">
                     <Button type="submit" variant="outline-dark" size="md">
-                      Create Account
+                      Login
                     </Button>{" "}
                   </div>
 

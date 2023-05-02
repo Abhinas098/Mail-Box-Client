@@ -14,10 +14,11 @@ function Header() {
   const logoutHandler = () => {
     dispatch(authActions.isLogout());
     localStorage.removeItem("token");
+    localStorage.removeItem("email");
   };
 
   return (
-    <Navbar collapseOnSelect expand="lg" variant="dark">
+    <Navbar collapseOnSelect expand="lg" variant="dark" bg="dark">
       <Container>
         <Navbar.Brand className="fw-bold" onClick={() => history.push("/")}>
           Mail Box Client
