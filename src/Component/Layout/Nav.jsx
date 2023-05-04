@@ -39,6 +39,9 @@ function Header() {
             {isLogin && (
               <Nav.Link onClick={() => history.push("/home")}>Home</Nav.Link>
             )}
+            {isLogin && (
+              <Nav.Link onClick={() => history.push("/about")}>About</Nav.Link>
+            )}
             {isLogin && <Nav.Link onClick={logoutHandler}>LogOut</Nav.Link>}
           </Nav>
         </Navbar.Collapse>

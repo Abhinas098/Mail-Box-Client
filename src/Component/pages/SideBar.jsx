@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import Compose from "../Mail/Compose";
+import { RiMailUnreadLine } from "react-icons/ri";
 import {
   CDBSidebar,
   CDBSidebarFooter,
@@ -8,6 +9,7 @@ import {
   CDBSidebarMenu,
   CDBSidebarMenuItem,
 } from "cdbreact";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   const [modalShow, setModalShow] = React.useState(false);
@@ -33,7 +35,10 @@ const Sidebar = () => {
           </CDBSidebarHeader>
 
           <CDBSidebarMenu>
-            <CDBSidebarMenuItem>Wellcome</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem>
+              <RiMailUnreadLine />
+              <Link to="/email"> IndBox</Link>
+            </CDBSidebarMenuItem>
           </CDBSidebarMenu>
 
           <CDBSidebarFooter></CDBSidebarFooter>
