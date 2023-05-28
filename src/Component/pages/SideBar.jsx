@@ -10,9 +10,12 @@ import {
   CDBSidebarMenuItem,
 } from "cdbreact";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
   const [modalShow, setModalShow] = React.useState(false);
+  const unread = useSelector((state) => state.email.unread);
+
   return (
     <>
       <Compose show={modalShow} onHide={() => setModalShow(false)} />
@@ -37,7 +40,7 @@ const Sidebar = () => {
           <CDBSidebarMenu>
             <CDBSidebarMenuItem>
               <RiMailUnreadLine />
-              <Link to="/email"> IndBox</Link>
+              <Link to="/email"> IndBox ({unread})</Link>
             </CDBSidebarMenuItem>
           </CDBSidebarMenu>
 

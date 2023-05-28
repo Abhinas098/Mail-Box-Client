@@ -28,6 +28,7 @@ function Compose(props) {
       email: email,
       subject: subject,
       message: value,
+      read: true,
     };
 
     try {
@@ -57,6 +58,7 @@ function Compose(props) {
             from: replacedSenderMail,
             subject: subject,
             message: value,
+            read: true,
           }),
           headers: {
             "Content-Type": "application/json",

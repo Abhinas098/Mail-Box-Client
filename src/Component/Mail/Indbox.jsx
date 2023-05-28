@@ -1,58 +1,89 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Card, ListGroup } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { emailActions } from "../../store/email-slice";
+import { Link } from "react-router-dom";
 
 const Indbox = () => {
-  const [data, setData] = useState("");
+  const dispatch = useDispatch();
+  const data = useSelector((state) => state.email.recieved);
+
+  const [loader, setloader] = useState(false);
 
   const email = localStorage.getItem("email");
   const mail = email.replace(/[@.]/g, "");
+
   const GetData = useCallback(async () => {
     try {
+      setloader(true);
       let res = await fetch(
         `https://mail-box-client-710c7-default-rtdb.firebaseio.com/${mail}indbox.json`
       );
       let data = await res.json();
       let arr = [];
+      let unreadMsg = 0;
       console.log(data);
+
       for (let key in data) {
-        arr.push(data[key]);
-        setData(arr);
+        if (data[key].read === true) {
+          unreadMsg++;
+        }
+        const id = key;
+        arr = [{ id: id, ...data[key] }, ...arr];
+
+        dispatch(emailActions.recievedMail([...arr]));
+        dispatch(emailActions.unreadMessage(unreadMsg));
+        setloader(false);
       }
     } catch (err) {
       console.log(err);
+      setloader(false);
     }
-  }, [mail]);
-
-  const openMessage = () => {};
+  }, [mail, dispatch]);
 
   useEffect(() => {
     GetData();
   }, [GetData]);
-  console.log(data, "likun");
 
   return (
     <>
       <Card bg="secondary">
         <h2 style={{ textAlign: "center" }}>Indbox</h2>
         <ListGroup>
-          {data.length === 0 && <h5>Empty indbox No message found !</h5>}
-          {data !== null &&
+          {loader && data.length > 0 && <h5>Loading....</h5>}
+          {!loader &&
+            data !== null &&
+            data.length > 0 &&
             Object.keys(data).map((email, index) => {
               return (
-                <ListGroup.Item
-                  onClick={() => openMessage}
-                  style={{ cursor: "pointer", backgroundColor: "darkgray" }}
+                <Link
                   key={index}
+                  style={{ textDecoration: "none" }}
+                  to={`/email/${data[email].id}`}
                 >
-                  <span>
-                    <b>From:</b> {data[email].from}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Subject: </b> {data[email].subject}
-                  </span>
-                  <br />
-                </ListGroup.Item>
+                  {" "}
+                  <ListGroup.Item
+                    key={email.id}
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: "darkgray",
+                    }}
+                  >
+                    <span>
+                      {data[email].read && (
+                        <h2 style={{ float: "right" }}>🟢</h2>
+                      )}
+                    </span>
+                    <span>
+                      <b>From:</b> {data[email].from}
+                    </span>
+                    <br />
+                    <span>
+                      <b>Subject: </b> {data[email].subject}
+                    </span>
+                    <br />
+                  </ListGroup.Item>
+                </Link>
               );
             })}
         </ListGroup>

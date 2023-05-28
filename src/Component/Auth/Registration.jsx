@@ -1,11 +1,12 @@
 import React, { useRef, useState } from "react";
 import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 export default function Registration() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
+  const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(false);
   const [password, confirmPassword] = useState(true);
@@ -50,6 +51,7 @@ export default function Registration() {
         setIsLoading(false);
         if (res.ok) {
           alert("Success!");
+          history.push("/login");
           console.log(res);
           //
         } else {
