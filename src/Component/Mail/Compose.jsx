@@ -33,7 +33,7 @@ function Compose(props) {
 
     try {
       const response = await fetch(
-        `https://mail-box-client-710c7-default-rtdb.firebaseio.com/${replacedSenderMail}sentMailbox.json`,
+        `https://mail-box-client-2-default-rtdb.firebaseio.com/${replacedSenderMail}sentMailbox.json`,
         {
           method: "POST",
           body: JSON.stringify(mailData),
@@ -51,11 +51,11 @@ function Compose(props) {
     try {
       const mail = email.replace(/[@.]/g, "");
       const response = await fetch(
-        `https://mail-box-client-710c7-default-rtdb.firebaseio.com/${mail}indbox.json`,
+        `https://mail-box-client-2-default-rtdb.firebaseio.com/${mail}indbox.json`,
         {
           method: "POST",
           body: JSON.stringify({
-            from: replacedSenderMail,
+            from: senderEmail,
             subject: subject,
             message: value,
             read: true,

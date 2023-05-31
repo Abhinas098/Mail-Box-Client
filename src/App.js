@@ -8,10 +8,12 @@ import Layout from "./Component/Layout/Layout";
 import About from "./Component/pages/About";
 import Indbox from "./Component/Mail/Indbox";
 import Mails from "./Component/Mail/ReadMails";
+import SendBox from "./Component/Mail/SendBox";
+import ReadSendMail from "./Component/Mail/ReadSendMail";
 
 function App() {
   const isLogin = useSelector((state) => state.auth.isLoggedIn);
-  console.log(isLogin);
+  console.log(5 % 2);
 
   return (
     <>
@@ -40,15 +42,29 @@ function App() {
             </Route>
           )}
           {isLogin && (
-            <Route exact path="/email">
-              <Indbox />
-            </Route>
-          )}
-          {isLogin && (
             <Route path="/about">
               <About />
             </Route>
           )}
+
+          {isLogin && (
+            <Route exact path="/sendmail">
+              <SendBox />
+            </Route>
+          )}
+
+          {isLogin && (
+            <Route path="/sendmail/:id">
+              {" "}
+              <ReadSendMail />
+            </Route>
+          )}
+          {isLogin && (
+            <Route exact path="/email">
+              <Indbox />
+            </Route>
+          )}
+
           {isLogin && (
             <Route path="/email/:id">
               {" "}

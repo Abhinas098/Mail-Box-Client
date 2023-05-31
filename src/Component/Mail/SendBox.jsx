@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { emailActions } from "../../store/email-slice";
 import { Link } from "react-router-dom";
 
-const Indbox = () => {
+const SendBox = () => {
   const dispatch = useDispatch();
-  const data = useSelector((state) => state.email.recieved);
+  const data = useSelector((state) => state.email.send);
 
   const [loader, setloader] = useState(false);
 
@@ -17,22 +17,17 @@ const Indbox = () => {
     try {
       setloader(true);
       let res = await fetch(
-        `https://mail-box-client-2-default-rtdb.firebaseio.com/${mail}indbox.json`
+        `https://mail-box-client-2-default-rtdb.firebaseio.com/${mail}sentMailbox.json`
       );
       let data = await res.json();
       let arr = [];
-      let unreadMsg = 0;
       console.log(data);
 
       for (let key in data) {
-        if (data[key].read === true) {
-          unreadMsg++;
-        }
         const id = key;
         arr = [{ id: id, ...data[key] }, ...arr];
 
-        dispatch(emailActions.recievedMail([...arr]));
-        dispatch(emailActions.unreadMessage(unreadMsg));
+        dispatch(emailActions.sendMail([...arr]));
         setloader(false);
       }
     } catch (err) {
@@ -44,7 +39,7 @@ const Indbox = () => {
   const DeleteHandler = async (id) => {
     console.log(id);
     const res = await fetch(
-      `https://mail-box-client-2-default-rtdb.firebaseio.com/${mail}indbox/${id}.json`,
+      `https://mail-box-client-2-default-rtdb.firebaseio.com/${mail}sentMailbox/${id}.json`,
       {
         method: "DELETE",
         headers: {
@@ -65,7 +60,7 @@ const Indbox = () => {
   return (
     <>
       <Card bg="secondary">
-        <h2 style={{ textAlign: "center" }}>Indbox</h2>
+        <h2 style={{ textAlign: "center" }}>SendBox</h2>
         <ListGroup>
           {loader && data.length > 0 && <h5>Loading....</h5>}
           {!loader &&
@@ -85,18 +80,11 @@ const Indbox = () => {
                       color: "black",
                       cursor: "pointer",
                     }}
-                    to={`/email/${data[email].id}`}
+                    to={`/sendmail/${data[email].id}`}
                   >
                     {" "}
                     <span>
-                      {data[email].read && (
-                        <p className="mt-3 me-3 ms-0" style={{ float: "left" }}>
-                          🟢
-                        </p>
-                      )}
-                    </span>
-                    <span>
-                      <b>From:</b> {data[email].from}
+                      <b>To:</b> {data[email].email}
                     </span>
                     <br />
                     <span>
@@ -121,4 +109,4 @@ const Indbox = () => {
   );
 };
 
-export default Indbox;
+export default SendBox;
