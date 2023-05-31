@@ -59,7 +59,12 @@ const Indbox = () => {
   };
 
   useEffect(() => {
-    GetData();
+    let interval = setInterval(() => {
+      GetData();
+    }, 5000);
+    return () => {
+      clearInterval(interval);
+    };
   }, [GetData]);
 
   return (
