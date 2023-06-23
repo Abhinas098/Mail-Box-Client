@@ -58,13 +58,17 @@ const Indbox = () => {
     GetData();
   };
 
+  // useEffect(() => {
+  //   let interval = setInterval(() => {
+  //     GetData();
+  //   }, 5000);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [GetData]);
+
   useEffect(() => {
-    let interval = setInterval(() => {
-      GetData();
-    }, 5000);
-    return () => {
-      clearInterval(interval);
-    };
+    GetData();
   }, [GetData]);
 
   return (
@@ -86,9 +90,6 @@ const Indbox = () => {
                     key={index}
                     style={{
                       float: "left",
-                      textDecoration: "none",
-                      color: "black",
-                      cursor: "pointer",
                     }}
                     to={`/email/${data[email].id}`}
                   >

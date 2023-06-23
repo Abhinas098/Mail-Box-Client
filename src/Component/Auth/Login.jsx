@@ -120,10 +120,16 @@ export default function Login() {
                 </Form>
                 <p className="mb-0 mt-3 text-center">
                   Don't have an account??{" "}
-                  <Link to="/register" className="text-dark fw-bold">
+                  <Link to="/register" className="fw-bold">
                     Register
                   </Link>
                 </p>
+                <Link
+                  className="d-flex justify-content-center align-items-center"
+                  to="/forgot"
+                >
+                  <i className="fw-bold pt-3">Forget password</i>
+                </Link>
               </Card.Body>
             </Card>
           </Col>

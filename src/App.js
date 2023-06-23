@@ -10,10 +10,10 @@ import Indbox from "./Component/Mail/Indbox";
 import Mails from "./Component/Mail/ReadMails";
 import SendBox from "./Component/Mail/SendBox";
 import ReadSendMail from "./Component/Mail/ReadSendMail";
+import Forget from "./Component/Auth/Forget";
 
 function App() {
   const isLogin = useSelector((state) => state.auth.isLoggedIn);
-  console.log(5 % 2);
 
   return (
     <>
@@ -28,6 +28,12 @@ function App() {
           {!isLogin && (
             <Route path="/login">
               <Login />
+            </Route>
+          )}
+
+          {!isLogin && (
+            <Route path="/forgot">
+              <Forget />
             </Route>
           )}
 
