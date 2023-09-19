@@ -1,8 +1,16 @@
 :any-link {
   text-decoration: none;
-  color: rgb(47, 50, 52);
+  color: rgb(17, 17, 17);
   cursor: pointer;
 }
-:any-link:hover{
-  color:rgb(63, 49, 94);
+:any-link:hover {
+  color: rgb(171, 171, 171);
+}
+
+.scroll {
+  overflow-y: auto;
+  max-height: 90vh;
+}
+::-webkit-scrollbar {
+  display: none;
 }

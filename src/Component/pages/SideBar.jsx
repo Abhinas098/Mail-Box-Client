@@ -1,7 +1,13 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import Compose from "../Mail/Compose";
-import { RiMailUnreadLine } from "react-icons/ri";
+import {
+  RiMailUnreadLine,
+  RiDeleteBin5Line,
+  RiSettings2Line,
+  RiUser2Line,
+} from "react-icons/ri";
+import { BsSend } from "react-icons/bs";
 import {
   CDBSidebar,
   CDBSidebarFooter,
@@ -16,13 +22,52 @@ const Sidebar = () => {
   const [modalShow, setModalShow] = React.useState(false);
   const unread = useSelector((state) => state.email.unread);
 
+  // Verify Email
+  const token = useSelector((state) => state.auth.token);
+  const emailHandler = (e) => {
+    e.preventDefault();
+    fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyC5RfB2zeAPwPIykibRKYnL7KdPnkq49Bw",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          requestType: "VERIFY_EMAIL",
+          idToken: token,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          res.json().then((data) => {
+            let errorMsg = "Authotication Failed";
+            if (data && data.error && data.error.message) {
+              errorMsg = data.error.message;
+            }
+            throw new Error(errorMsg);
+          });
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        alert("Check Your mail", data.email);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
   return (
     <>
       <Compose show={modalShow} onHide={() => setModalShow(false)} />
       <div
         style={{
           display: "flex",
-          height: "100vh",
+          height: "90vh",
           overflow: "scroll initial",
           float: "left",
         }}
@@ -44,12 +89,37 @@ const Sidebar = () => {
             </CDBSidebarMenuItem>
 
             <CDBSidebarMenuItem>
-              <RiMailUnreadLine />
+              <BsSend />
               <Link to="/sendmail"> SendBox</Link>
+            </CDBSidebarMenuItem>
+
+            <CDBSidebarMenuItem>
+              <RiDeleteBin5Line />
+              <Link to="/trashmail"> Trash</Link>
             </CDBSidebarMenuItem>
           </CDBSidebarMenu>
 
-          <CDBSidebarFooter></CDBSidebarFooter>
+          <CDBSidebarMenu>
+            <CDBSidebarMenuItem>
+              <hr></hr>
+            </CDBSidebarMenuItem>
+          </CDBSidebarMenu>
+
+          <CDBSidebarFooter>
+            <CDBSidebarMenuItem>
+              <RiSettings2Line /> Setting
+            </CDBSidebarMenuItem>
+
+            <CDBSidebarMenuItem>
+              <RiUser2Line /> {localStorage.getItem("email")}
+            </CDBSidebarMenuItem>
+
+            <CDBSidebarMenuItem>
+              <Button variant="outline-info" onClick={emailHandler}>
+                Verify E-mail
+              </Button>
+            </CDBSidebarMenuItem>
+          </CDBSidebarFooter>
         </CDBSidebar>
       </div>
     </>

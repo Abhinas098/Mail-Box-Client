@@ -17,7 +17,7 @@ const SendBox = () => {
     try {
       setloader(true);
       let res = await fetch(
-        `https://mail-box-client-2-default-rtdb.firebaseio.com/${mail}sentMailbox.json`
+        `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}sentMailbox.json`
       );
       let data = await res.json();
       let arr = [];
@@ -39,7 +39,7 @@ const SendBox = () => {
   const DeleteHandler = async (id) => {
     console.log(id);
     const res = await fetch(
-      `https://mail-box-client-2-default-rtdb.firebaseio.com/${mail}sentMailbox/${id}.json`,
+      `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}sentMailbox/${id}.json`,
       {
         method: "DELETE",
         headers: {
@@ -59,7 +59,7 @@ const SendBox = () => {
 
   return (
     <>
-      <Card bg="secondary">
+      <Card className="scroll" bg="secondary">
         <h2 style={{ textAlign: "center" }}>SendBox</h2>
         <ListGroup>
           {loader && data.length > 0 && <h5>Loading....</h5>}

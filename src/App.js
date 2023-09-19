@@ -11,6 +11,7 @@ import Mails from "./Component/Mail/ReadMails";
 import SendBox from "./Component/Mail/SendBox";
 import ReadSendMail from "./Component/Mail/ReadSendMail";
 import Forget from "./Component/Auth/Forget";
+import TrashMail from "./Component/Mail/TrashMail";
 
 function App() {
   const isLogin = useSelector((state) => state.auth.isLoggedIn);
@@ -77,6 +78,14 @@ function App() {
               <Mails />
             </Route>
           )}
+
+          {isLogin && (
+            <Route path="/trashmail">
+              {" "}
+              <TrashMail />
+            </Route>
+          )}
+
           {!isLogin && (
             <Route path="*">
               <Redirect to="/login" />

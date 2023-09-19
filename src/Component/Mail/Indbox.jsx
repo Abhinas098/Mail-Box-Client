@@ -9,6 +9,7 @@ const Indbox = () => {
   const data = useSelector((state) => state.email.recieved);
 
   const [loader, setloader] = useState(false);
+  const [error, setError] = useState(false);
 
   const email = localStorage.getItem("email");
   const mail = email.replace(/[@.]/g, "");
@@ -17,7 +18,7 @@ const Indbox = () => {
     try {
       setloader(true);
       let res = await fetch(
-        `https://mail-box-client-2-default-rtdb.firebaseio.com/${mail}indbox.json`
+        `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}indbox.json`
       );
       let data = await res.json();
       let arr = [];
@@ -38,13 +39,33 @@ const Indbox = () => {
     } catch (err) {
       console.log(err);
       setloader(false);
+      setError(true);
     }
   }, [mail, dispatch]);
 
-  const DeleteHandler = async (id) => {
-    console.log(id);
+  const DeleteHandler = async (val) => {
+    // post to trash
+    try {
+      const response = await fetch(
+        `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}trashMail.json`,
+        {
+          method: "POST",
+          body: JSON.stringify(val),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      let data = await response;
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+
+    // delete from inbox
+
     const res = await fetch(
-      `https://mail-box-client-2-default-rtdb.firebaseio.com/${mail}indbox/${id}.json`,
+      `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}indbox/${val.id}.json`,
       {
         method: "DELETE",
         headers: {
@@ -73,10 +94,11 @@ const Indbox = () => {
 
   return (
     <>
-      <Card bg="secondary">
+      <Card className="scroll" bg="secondary">
         <h2 style={{ textAlign: "center" }}>Indbox</h2>
         <ListGroup>
-          {loader && data.length > 0 && <h5>Loading....</h5>}
+          {error && data.length === 0 && <h2>Something went wrong!</h2>}
+          {loader && <h5>Loading....</h5>}
           {!loader &&
             data !== null &&
             data.length > 0 &&
@@ -111,7 +133,7 @@ const Indbox = () => {
                     </span>
                   </Link>
                   <Button
-                    onClick={() => DeleteHandler(data[email].id)}
+                    onClick={() => DeleteHandler(data[email])}
                     key={data[email].id}
                     style={{ float: "right" }}
                     variant="danger"

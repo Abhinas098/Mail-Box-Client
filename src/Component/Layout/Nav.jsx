@@ -4,7 +4,7 @@ import Navbar from "react-bootstrap/Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { authActions } from "../../store/auth-slice";
-
+import { AiOutlineMail } from "react-icons/ai";
 function Header() {
   const history = useHistory();
   const isLogin = useSelector((state) => state.auth.isLoggedIn);
@@ -18,10 +18,18 @@ function Header() {
   };
 
   return (
-    <Navbar collapseOnSelect expand="lg" variant="dark" bg="dark">
+    <Navbar
+      className="bg-body-tertiary"
+      collapseOnSelect
+      expand="lg"
+      variant="dark"
+      bg="dark"
+      style={{ height: "10vh" }}
+    >
       <Container>
-        <Navbar.Brand className="fw-bold" onClick={() => history.push("/")}>
+        <Navbar.Brand classNamse="fw-bold" onClick={() => history.push("/")}>
           Mail Box Client
+          <AiOutlineMail style={{ margin: "10px" }} />
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />

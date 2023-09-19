@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
+import Emailvalidation from "@everapi/emailvalidation-js";
 
 export default function Registration() {
   const emailRef = useRef();
@@ -11,8 +12,9 @@ export default function Registration() {
   const [isLoading, setIsLoading] = useState(false);
   const [password, confirmPassword] = useState(true);
   const [validate, setValidate] = useState(false);
+  const [valid, setValid] = useState(true);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
 
     const form = e.currentTarget;
@@ -31,39 +33,60 @@ export default function Registration() {
     }
 
     if (enteredPassword === enteredConfirmPassword) {
-      setIsLoading(true);
-      fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyC5RfB2zeAPwPIykibRKYnL7KdPnkq49Bw",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: enteredEmail,
-            password: enteredPassword,
-            confirmPassword: enteredConfirmPassword,
-            returnSecureToken: true,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      ).then((res) => {
-        confirmPassword(true);
-        setIsLoading(false);
-        if (res.ok) {
-          alert("Success!");
-          history.push("/login");
-          console.log(res);
-          //
-        } else {
-          res.json().then((data) => {
-            let errorMsg = "Authotication Failed";
-            if (data && data.error && data.error.message) {
-              errorMsg = data.error.message;
-            }
-            confirmPassword(errorMsg);
-          });
-        }
-      });
+      // Check mail is valid or not
+      const client = await new Emailvalidation(
+        "ema_live_XTGKMc3Q8Re2wFUa69sIvW6u75VrbsSdpcDlpbg8"
+      );
+      await client
+        .info(`${enteredEmail}`, {
+          catch_all: 0,
+        })
+        .then((response) => {
+          console.log(response.reason === "invalid_mailbox");
+          if (response.reason === "invalid_mailbox") {
+            setValid(false);
+          } else {
+            setValid(true);
+          }
+        });
+      if (valid === true) {
+        setIsLoading(true);
+        fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyC5RfB2zeAPwPIykibRKYnL7KdPnkq49Bw",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: enteredEmail,
+              password: enteredPassword,
+              confirmPassword: enteredConfirmPassword,
+              returnSecureToken: true,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        ).then((res) => {
+          confirmPassword(true);
+          setIsLoading(false);
+          if (res.ok) {
+            alert("Success!");
+            history.push("/login");
+            console.log(res);
+            //
+          } else {
+            res.json().then((data) => {
+              let errorMsg = "Authotication Failed";
+              if (data && data.error && data.error.message) {
+                errorMsg = data.error.message;
+              }
+              confirmPassword(errorMsg);
+              setValid(false);
+            });
+          }
+        });
+      } else {
+        setValid(false);
+      }
     }
   };
   return (
@@ -111,6 +134,7 @@ export default function Registration() {
                   </Form.Group>
 
                   <div className="text-danger mb-3">
+                    {!password && !valid && "Please enter Valid Email"}
                     {!password && "Not Matched!"}
                     {password}
                   </div>
