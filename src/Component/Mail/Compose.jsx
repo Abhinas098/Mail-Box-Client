@@ -7,6 +7,9 @@ import Modal from "react-bootstrap/Modal";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { Card, Form, InputGroup } from "react-bootstrap";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function Compose(props) {
   const emailRef = useRef();
   const subRef = useRef();
@@ -25,28 +28,32 @@ function Compose(props) {
     console.log(email, subject, value);
 
     const mailData = {
-      email: email,
+      email: email.length > 0 ? email : null,
       subject: subject,
       message: value,
       read: true,
     };
 
     try {
-      const response = await fetch(
-        `https://mail-box-ea204-default-rtdb.firebaseio.com/${replacedSenderMail}sentMailbox.json`,
-        {
-          method: "POST",
-          body: JSON.stringify(mailData),
-          headers: {
-            "Content-Type": "application/json",
-          },
+      if (mailData.email !== null) {
+        const response = await fetch(
+          `https://mail-box-ea204-default-rtdb.firebaseio.com/${replacedSenderMail}sentMailbox.json`,
+          {
+            method: "POST",
+            body: JSON.stringify(mailData),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        let data = await response;
+        if (data) {
+          toast.success("Successfully send");
         }
-      );
-      let data = await response;
-      alert("successfully send");
-      console.log(data);
+        console.log(data);
+      }
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
 
     try {
@@ -69,7 +76,7 @@ function Compose(props) {
       let data = await response;
       console.log(data);
     } catch (err) {
-      alert(err);
+      toast.error(err);
     }
   };
   useEffect(() => {
@@ -78,6 +85,18 @@ function Compose(props) {
 
   return (
     <div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Modal
         {...props}
         size="lg"
@@ -113,12 +132,16 @@ function Compose(props) {
               <Editor
                 editorState={editorState}
                 onEditorStateChange={setEditorState}
-                wrapperClassName="wrapper-class"
-                editorClassName="editor-class"
-                toolbarClassName="toolbar-class"
+                wrapperClassName="demo-wrapper"
+                editorClassName="demo-editor"
+                toolbarClassName="demo-toolbar-custom"
                 placeholder="Write some message"
                 toolbar={{
                   inline: { inDropdown: true },
+                  list: { inDropdown: true },
+                  textAlign: { inDropdown: true },
+                  link: { inDropdown: true },
+                  history: { inDropdown: true },
                 }}
               />
             </Card>

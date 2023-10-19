@@ -51,7 +51,7 @@ const Mails = () => {
           Message
         </Card.Header>
         {singleMail[0] && (
-          <Card.Body>
+          <Card.Body style={{ maxHeight: "70vh" ,overflow:'scroll'}}>
             <Card.Title>From: {singleMail[0].from}</Card.Title>
             <Card.Text>
               <b>Subject: </b>
@@ -63,7 +63,11 @@ const Mails = () => {
             </Card.Text>
           </Card.Body>
         )}
+
         {!singleMail[0] && history.push("/email")}
+        <center>
+          <h1 onClick={() => history.push("/email")}>🔙</h1>
+        </center>
       </Card>
     </Fragment>
   );

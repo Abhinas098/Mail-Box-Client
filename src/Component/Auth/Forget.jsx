@@ -73,7 +73,7 @@ const Forget = () => {
                     Send Link
                   </Button>{" "}
                   <p className="mt-3 ">
-                    Already a user? <Link className='fw-bold' to="/login">login</Link>
+                    New user? <Link className='fw-bold' to="/register">Register</Link>
                   </p>
                 </Form>
               </Card.Body>

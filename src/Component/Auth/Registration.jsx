@@ -1,7 +1,17 @@
 import React, { useRef, useState } from "react";
-import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
+import {
+  Col,
+  Button,
+  Row,
+  Container,
+  Card,
+  Form,
+  FloatingLabel,
+} from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import Emailvalidation from "@everapi/emailvalidation-js";
+
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 export default function Registration() {
   const emailRef = useRef();
@@ -13,6 +23,7 @@ export default function Registration() {
   const [password, confirmPassword] = useState(true);
   const [validate, setValidate] = useState(false);
   const [valid, setValid] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -89,48 +100,57 @@ export default function Registration() {
       }
     }
   };
+  const showPassword = () => {
+    setVisible(visible ? false : true);
+  };
   return (
     <>
       <Container>
         <Row className="vh-100 d-flex justify-content-center align-items-center">
-          <Col md={7} lg={5} xs={10}>
+          <Col md={6} lg={4} xs={10}>
             <Card className="form">
-              <Card.Body className="mb-3 mt-md-4">
-                <h2 className="fw-bold mb-2 text-center text-uppercase ">
-                  Register
-                </h2>
+              <Card.Body className="mb-2 mt-md-2">
+                <h2 className="fw-bold mb-4 text-center">Create an Account</h2>
                 <Form validated={validate} noValidate onSubmit={submitHandler}>
-                  <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label className="text-center">
-                      Email address
-                    </Form.Label>
-                    <Form.Control
-                      required
-                      ref={emailRef}
-                      type="email"
-                      placeholder="Enter email"
-                    />
+                  <Form.Group className="mb-4 mt-3" controlId="formBasicEmail">
+                    <FloatingLabel label="Enter Email">
+                      <Form.Control
+                        required
+                        ref={emailRef}
+                        type="email"
+                        placeholder="Enter email"
+                        className="input"
+                      />
+                    </FloatingLabel>
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                   </Form.Group>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                      required
-                      ref={passwordRef}
-                      type="password"
-                      placeholder="Password"
-                    />
+                  <Form.Group className="mb-4">
+                    <FloatingLabel label="Password" className="pass-wrapper">
+                      <Form.Control
+                        required
+                        ref={passwordRef}
+                        type={visible ? "text" : "password"}
+                        placeholder="Password"
+                        className="input"
+                      />
+                      <i onClick={showPassword} className="eye">
+                        {" "}
+                        {!visible ? <BsEye /> : <BsEyeSlash />}
+                      </i>
+                    </FloatingLabel>
                   </Form.Group>
 
-                  <Form.Group className="mb-2">
-                    <Form.Label>Confirm Password</Form.Label>
-                    <Form.Control
-                      required
-                      ref={confirmPasswordRef}
-                      type="password"
-                      placeholder="Password"
-                    />
+                  <Form.Group className="mb-4">
+                    <FloatingLabel label="Confirm Password">
+                      <Form.Control
+                        required
+                        ref={confirmPasswordRef}
+                        type="password"
+                        placeholder="Password"
+                        className="input"
+                      />
+                    </FloatingLabel>
                   </Form.Group>
 
                   <div className="text-danger mb-3">
@@ -140,7 +160,7 @@ export default function Registration() {
                   </div>
 
                   <div className="text-center">
-                    <Button type="submit" variant="outline-dark">
+                    <Button type="submit" variant="outline-dark" size="lg">
                       Create Account
                     </Button>{" "}
                   </div>

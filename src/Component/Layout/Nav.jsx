@@ -5,11 +5,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { authActions } from "../../store/auth-slice";
 import { AiOutlineMail } from "react-icons/ai";
+import { useState } from "react";
 function Header() {
   const history = useHistory();
   const isLogin = useSelector((state) => state.auth.isLoggedIn);
 
   const dispatch = useDispatch();
+
+  const [theme, setTheme] = useState("night");
+
+  const themeHandler = () => {
+    if (theme === "day") {
+      setTheme("night");
+    } else {
+      setTheme("day");
+    }
+  };
+  if (theme === "day") {
+    document.body.style.background =
+      "linear-gradient(rgb(85, 73, 222),rgb(144, 144, 142))";
+  } else {
+    document.body.style.background =
+      "linear-gradient(rgb(66, 72, 55), rgb(69, 64, 121))";
+  }
 
   const logoutHandler = () => {
     dispatch(authActions.isLogout());
@@ -24,7 +42,6 @@ function Header() {
       expand="lg"
       variant="dark"
       bg="dark"
-      style={{ height: "10vh" }}
     >
       <Container>
         <Navbar.Brand classNamse="fw-bold" onClick={() => history.push("/")}>
@@ -51,6 +68,13 @@ function Header() {
               <Nav.Link onClick={() => history.push("/about")}>About</Nav.Link>
             )}
             {isLogin && <Nav.Link onClick={logoutHandler}>LogOut</Nav.Link>}
+
+            <h3
+              style={{ padding: "0px 10px", cursor: "pointer" }}
+              onClick={themeHandler}
+            >
+              {theme === "day" ? <>🌙</> : <>🔆</>}
+            </h3>
           </Nav>
         </Navbar.Collapse>
       </Container>

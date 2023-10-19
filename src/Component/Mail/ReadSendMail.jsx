@@ -24,7 +24,7 @@ const ReadSendMail = () => {
           Messages
         </Card.Header>
         {singleMail[0] && (
-          <Card.Body>
+          <Card.Body style={{ maxHeight: "70vh", overflow: "scroll" }}>
             <Card.Title>To: {singleMail[0].email}</Card.Title>
             <Card.Text>
               <b>Subject: </b>
@@ -37,6 +37,10 @@ const ReadSendMail = () => {
           </Card.Body>
         )}
         {!singleMail[0] && history.push("/sendmail")}
+
+        <center>
+          <h1 onClick={() => history.push("/email")}>🔙</h1>
+        </center>
       </Card>
     </Fragment>
   );

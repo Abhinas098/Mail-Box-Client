@@ -6,6 +6,7 @@ import {
   RiDeleteBin5Line,
   RiSettings2Line,
   RiUser2Line,
+  RiLogoutCircleLine,
 } from "react-icons/ri";
 import { BsSend } from "react-icons/bs";
 import {
@@ -16,7 +17,8 @@ import {
   CDBSidebarMenuItem,
 } from "cdbreact";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../../store/auth-slice";
 
 const Sidebar = () => {
   const [modalShow, setModalShow] = React.useState(false);
@@ -61,13 +63,23 @@ const Sidebar = () => {
       });
   };
 
+  // Logout
+
+  const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    dispatch(authActions.isLogout());
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+  };
+
   return (
     <>
       <Compose show={modalShow} onHide={() => setModalShow(false)} />
       <div
         style={{
           display: "flex",
-          height: "90vh",
+          height: "93vh",
           overflow: "scroll initial",
           float: "left",
         }}
@@ -95,7 +107,11 @@ const Sidebar = () => {
 
             <CDBSidebarMenuItem>
               <RiDeleteBin5Line />
-              <Link to="/trashmail"> Trash</Link>
+              <Link to="/trashmail"> Trash-Bin</Link>
+            </CDBSidebarMenuItem>
+
+            <CDBSidebarMenuItem>
+              <RiSettings2Line /> Setting
             </CDBSidebarMenuItem>
           </CDBSidebarMenu>
 
@@ -106,8 +122,8 @@ const Sidebar = () => {
           </CDBSidebarMenu>
 
           <CDBSidebarFooter>
-            <CDBSidebarMenuItem>
-              <RiSettings2Line /> Setting
+            <CDBSidebarMenuItem onClick={logoutHandler}>
+              <RiLogoutCircleLine /> LogOut
             </CDBSidebarMenuItem>
 
             <CDBSidebarMenuItem>

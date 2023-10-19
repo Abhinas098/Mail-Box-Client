@@ -14,3 +14,25 @@
 ::-webkit-scrollbar {
   display: none;
 }
+
+.pass-wrapper {
+  position: relative;
+  /* display: flex; */
+  margin-bottom: 15px;
+}
+
+.eye {
+  position: absolute;
+  top: 30%;
+  right: 7%;
+  cursor: pointer;
+}
+
+.input {
+  max-height: 52px;
+}
+.demo-toolbar-custom a {
+  text-decoration: none;
+  color: black;
+  margin: 0;
+}

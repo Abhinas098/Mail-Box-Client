@@ -1,7 +1,7 @@
 import React from "react";
 
 const About = () => {
-  return <h2>Wellcome to your email.</h2>;
+  return <h2>coming soon</h2>;
 };
 
 export default About;

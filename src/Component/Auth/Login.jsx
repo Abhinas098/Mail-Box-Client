@@ -3,7 +3,19 @@ import React, { useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/auth-slice";
-import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  FloatingLabel,
+  Form,
+  Row,
+} from "react-bootstrap";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Login() {
   const history = useHistory();
@@ -14,6 +26,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [password, confirmPassword] = useState(true);
   const [validate, setValidate] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -21,6 +34,27 @@ export default function Login() {
     e.preventDefault();
     const enteredEmail = emailRef.current.value;
     const enteredPassword = passwordRef.current.value;
+
+    // check mail
+    const apiKey = "44abc7d790dd4880b413352a60b66e10";
+    const apiURL =
+      "https://emailvalidation.abstractapi.com/v1/?api_key=" + apiKey;
+
+    const checkMail = async () => {
+      try {
+        const response = await fetch(apiURL + "&email=" + enteredEmail);
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        console.log(data.is_valid_format.value);
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
+    checkMail();
 
     const form = e.currentTarget;
     if (form.checkValidity()) {
@@ -66,52 +100,79 @@ export default function Login() {
           dispatch(authActions.isLogin(data.idToken));
         }
         localStorage.setItem("email", enteredEmail);
-        alert("Sucessfull!");
+        toast.success("Login Successfully!");
 
         history.replace("./home");
       })
       .catch((err) => {
         console.log(err.message);
+        toast.error(err.message);
       });
+  };
+
+  const showPassword = () => {
+    setVisible(visible ? false : true);
   };
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Container>
         <Row className="vh-100 d-flex justify-content-center align-items-center">
-          <Col md={7} lg={5} xs={10}>
+          <Col md={6} lg={4} xs={10}>
             <Card className="form">
-              <Card.Body className="mb-3 mt-md-4">
-                <h2 className="fw-bold mb-2 text-center text-uppercase ">
-                  Login
-                </h2>
+              <Card.Body className="mb-2 mt-md-2">
+                <h2 className="fw-bold mb-4 text-center">Sign in </h2>
+                {/* <hr /> */}
                 <Form validated={validate} noValidate onSubmit={submitHandler}>
-                  <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label className="text-center">
-                      Email address
-                    </Form.Label>
-                    <Form.Control
-                      required
-                      ref={emailRef}
-                      type="email"
-                      placeholder="Enter email"
-                    />
+                  <Form.Group className="mb-2 mt-3" controlId="formBasicEmail">
+                    <FloatingLabel label="Email">
+                      <Form.Control
+                        required
+                        ref={emailRef}
+                        type="email"
+                        placeholder="Enter email"
+                        className="input"
+                      />
+                    </FloatingLabel>
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                   </Form.Group>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                      required
-                      ref={passwordRef}
-                      type="password"
-                      placeholder="Password"
-                    />
+                  <div className="d-flex justify-content-between text-danger align-items-center">
+                    <div className="text-danger pb-2">{password}</div>
+                    <Link to="/forgot" className="text-danger ">
+                      <i>Forget password?</i>
+                    </Link>
+                  </div>
+
+                  <Form.Group className="mb-4">
+                    <FloatingLabel label="Password" className="pass-wrapper">
+                      <Form.Control
+                        required
+                        ref={passwordRef}
+                        type={visible ? "text" : "password"}
+                        placeholder="Password"
+                        className="input"
+                      />
+                      <i onClick={showPassword} className="eye">
+                        {" "}
+                        {!visible ? <BsEye /> : <BsEyeSlash />}
+                      </i>
+                    </FloatingLabel>
                   </Form.Group>
 
-                  <div className="text-danger mb-3">{password}</div>
-
                   <div className="text-center">
-                    <Button type="submit" variant="outline-dark" size="md">
+                    <Button type="submit" variant="outline-dark" size="lg">
                       Login
                     </Button>{" "}
                   </div>
@@ -124,12 +185,6 @@ export default function Login() {
                     Register
                   </Link>
                 </p>
-                <Link
-                  className="d-flex justify-content-center align-items-center"
-                  to="/forgot"
-                >
-                  <i className="fw-bold pt-3">Forget password</i>
-                </Link>
               </Card.Body>
             </Card>
           </Col>

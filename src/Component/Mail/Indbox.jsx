@@ -3,6 +3,10 @@ import { Button, Card, ListGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { emailActions } from "../../store/email-slice";
 import { Link } from "react-router-dom";
+import Loader from "../Layout/Loader";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Indbox = () => {
   const dispatch = useDispatch();
@@ -37,7 +41,7 @@ const Indbox = () => {
         setloader(false);
       }
     } catch (err) {
-      console.log(err);
+      toast.error(err);
       setloader(false);
       setError(true);
     }
@@ -59,24 +63,29 @@ const Indbox = () => {
       let data = await response;
       console.log(data);
     } catch (err) {
-      console.log(err);
+      toast.error(err.message);
     }
 
     // delete from inbox
 
-    const res = await fetch(
-      `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}indbox/${val.id}.json`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    try {
+      const res = await fetch(
+        `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}indbox/${val.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    let data = await res;
-    console.log(data);
-    GetData();
+      let data = await res;
+      console.log(data);
+      toast.success("Move to trash");
+      GetData();
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   // useEffect(() => {
@@ -94,11 +103,27 @@ const Indbox = () => {
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Card className="scroll" bg="secondary">
         <h2 style={{ textAlign: "center" }}>Indbox</h2>
         <ListGroup>
           {error && data.length === 0 && <h2>Something went wrong!</h2>}
-          {loader && <h5>Loading....</h5>}
+          {loader && data.length > 0 && (
+            <center>
+              <Loader />
+            </center>
+          )}
           {!loader &&
             data !== null &&
             data.length > 0 &&
