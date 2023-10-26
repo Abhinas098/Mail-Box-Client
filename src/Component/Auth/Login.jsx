@@ -148,14 +148,7 @@ export default function Login() {
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                   </Form.Group>
 
-                  <div className="d-flex justify-content-between text-danger align-items-center">
-                    <div className="text-danger pb-2">{password}</div>
-                    <Link to="/forgot" className="text-danger ">
-                      <i>Forget password?</i>
-                    </Link>
-                  </div>
-
-                  <Form.Group className="mb-4">
+                  <Form.Group className="mt-4">
                     <FloatingLabel label="Password" className="pass-wrapper">
                       <Form.Control
                         required
@@ -170,6 +163,13 @@ export default function Login() {
                       </i>
                     </FloatingLabel>
                   </Form.Group>
+
+                  <div className="d-flex justify-content-between text-danger align-items-center fw-bold ">
+                    <div className="text-danger ">{password}</div>
+                    <Link to="/forgot" className="text-danger">
+                      <i>Forget password?</i>
+                    </Link>
+                  </div>
 
                   <div className="text-center">
                     <Button type="submit" variant="outline-dark" size="lg">

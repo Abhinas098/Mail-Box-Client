@@ -22,11 +22,9 @@ function Header() {
     }
   };
   if (theme === "day") {
-    document.body.style.background =
-      "linear-gradient(rgb(85, 73, 222),rgb(144, 144, 142))";
+    document.body.className = "day";
   } else {
-    document.body.style.background =
-      "linear-gradient(rgb(66, 72, 55), rgb(69, 64, 121))";
+    document.body.className = "night";
   }
 
   const logoutHandler = () => {
@@ -48,6 +46,12 @@ function Header() {
           Mail Box Client
           <AiOutlineMail style={{ margin: "10px" }} />
         </Navbar.Brand>
+        <h3
+          style={{ padding: "0px 10px", cursor: "pointer" }}
+          onClick={themeHandler}
+        >
+          {theme === "day" ? <>🌙</> : <>🔆</>}
+        </h3>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -68,13 +72,6 @@ function Header() {
               <Nav.Link onClick={() => history.push("/about")}>About</Nav.Link>
             )}
             {isLogin && <Nav.Link onClick={logoutHandler}>LogOut</Nav.Link>}
-
-            <h3
-              style={{ padding: "0px 10px", cursor: "pointer" }}
-              onClick={themeHandler}
-            >
-              {theme === "day" ? <>🌙</> : <>🔆</>}
-            </h3>
           </Nav>
         </Navbar.Collapse>
       </Container>

@@ -1,13 +1,10 @@
-*{
+* {
   margin-top: 0%;
 }
 body {
-  background: linear-gradient(rgb(66, 72, 55), rgb(69, 64, 121));
-  /* background: ; */
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-position: 100%;
+  background: linear-gradient(rgb(66, 72, 55), rgb(69, 64, 121))  center center cover no-repeat fixed;;     
+  background-size: cover;
+  background-position: top
 }
 
 code {
@@ -16,5 +13,55 @@ code {
 }
 
 .form {
-  background: linear-gradient(rgb(190, 202, 174), rgb(123, 123, 164));
+  background: transparent !important;
+  border: 1px solid #000 !important;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
 }
+.form input {
+  background: inherit;
+  border-width: 1px 0px;
+  border-top-width: 0cap;
+  border-color: black;
+}
+.form input:focus {
+  background: transparent;
+  border-bottom: 1px solid black;
+  box-shadow: none;
+  color: currentColor;
+}
+
+.form input::selection {
+  background: rgb(149, 214, 217);
+}
+.form input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px inherit inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.day {
+  background-image: url("C:\Users\Abhinas Dash\Desktop\Sharpner\React\12.Mail-Box-Client\src\Day.jpg");
+  color: rgb(0, 0, 0) !important;
+  background-size: 150% 100%;
+}
+.night {
+  background-image: url("C:\Users\Abhinas Dash\Desktop\Sharpner\React\12.Mail-Box-Client\src\night.jpg");
+  color: antiquewhite !important;
+  background-size: 100% 100%;
+
+}
+/* @media screen and(min-width:700px) {
+  .day {
+    background-size: 60% 70%;
+  }
+  .night {
+    background-size: 100% 100%;
+  }
+}
+@media screen and(min-width:500px) {
+  .day {
+    background-size: 0
+  }
+  .night {
+    background-size: 0
+  }
+} */
