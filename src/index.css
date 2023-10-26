@@ -2,9 +2,9 @@
   margin-top: 0%;
 }
 body {
-  background: linear-gradient(rgb(66, 72, 55), rgb(69, 64, 121))  center center cover no-repeat fixed;;     
+  background: url("night.jpg");
   background-size: cover;
-  background-position: top
+  background-position: top;
 }
 
 code {
@@ -47,6 +47,4 @@ code {
   background-image: url("night.jpg");
   color: antiquewhite !important;
   background-size: 100% 100%;
-
 }
-
