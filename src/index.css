@@ -39,29 +39,14 @@ code {
 }
 
 .day {
-  background-image: url("C:\Users\Abhinas Dash\Desktop\Sharpner\React\12.Mail-Box-Client\src\Day.jpg");
+  background-image: url("Day.jpg");
   color: rgb(0, 0, 0) !important;
   background-size: 150% 100%;
 }
 .night {
-  background-image: url("C:\Users\Abhinas Dash\Desktop\Sharpner\React\12.Mail-Box-Client\src\night.jpg");
+  background-image: url("night.jpg");
   color: antiquewhite !important;
   background-size: 100% 100%;
 
 }
-/* @media screen and(min-width:700px) {
-  .day {
-    background-size: 60% 70%;
-  }
-  .night {
-    background-size: 100% 100%;
-  }
-}
-@media screen and(min-width:500px) {
-  .day {
-    background-size: 0
-  }
-  .night {
-    background-size: 0
-  }
-} */
+
