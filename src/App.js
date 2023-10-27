@@ -20,23 +20,23 @@ function App() {
 
   const [loading, setLoading] = useState(true);
 
-  const day = document.body.className='day'
-  console.log(day);
+  const day = document.getElementsByClassName("day");
+  const night = document.getElementsByClassName("night");
+  console.log(day, night);
 
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 3000);
   }, []);
 
   return (
     <>
       {loading ? (
         <>
-          <div className="pre-loader">
+          <div className="pre-loader night">
             <CircleLoader size="150px" color="#36d7b7" />
           </div>
-          .
         </>
       ) : (
         <Layout>
