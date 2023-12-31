@@ -1,10 +1,10 @@
 :any-link {
   text-decoration: none;
-  color: rgb(17, 17, 17);
+  color: currentColor;
   cursor: pointer;
 }
 :any-link:hover {
-  color: rgb(171, 171, 171);
+  color: rgb(82, 82, 82);
 }
 
 .scroll {
@@ -33,7 +33,7 @@
 }
 .demo-toolbar-custom a {
   text-decoration: none;
-  color: black;
+  color: currentColor;
   margin: 0;
 }
 
@@ -44,4 +44,13 @@
   width: 100%;
   height: 100vh;
   z-index: 10000;
+  background: #000;
+}
+
+.trashBtn {
+  float: right;
+  margin-top: 10px;
+  margin-right: 10px;
+  border-radius: 10px;
+  max-width: 20vw
 }

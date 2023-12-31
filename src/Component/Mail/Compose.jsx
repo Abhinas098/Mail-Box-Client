@@ -7,12 +7,17 @@ import Modal from "react-bootstrap/Modal";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { Card, Form, InputGroup } from "react-bootstrap";
 
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useApi from "../../hooks/useApi";
 
 function Compose(props) {
   const emailRef = useRef();
   const subRef = useRef();
+
+  const { onSend } = useApi();
+
+  const url = "https://mail-box-ea204-default-rtdb.firebaseio.com";
 
   const [value, editorValue] = useState(null);
   const [editorState, setEditorState] = useState(() =>
@@ -22,62 +27,42 @@ function Compose(props) {
   const senderEmail = localStorage.getItem("email");
 
   const onSendMail = async (e) => {
-    const replacedSenderMail = senderEmail.replace(/[@.]/g, "");
-    const email = emailRef.current.value;
-    const subject = subRef.current.value;
-    console.log(email, subject, value);
+    const replacedSenderMail = senderEmail?.replace(/[@.]/g, "");
+    const email = emailRef?.current?.value ?? "";
+    const subject = subRef?.current?.value ?? "";
 
-    const mailData = {
+    const sendData = {
       email: email.length > 0 ? email : null,
       subject: subject,
       message: value,
       read: true,
     };
 
-    try {
-      if (mailData.email !== null) {
-        const response = await fetch(
-          `https://mail-box-ea204-default-rtdb.firebaseio.com/${replacedSenderMail}sentMailbox.json`,
-          {
-            method: "POST",
-            body: JSON.stringify(mailData),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        let data = await response;
-        if (data) {
-          toast.success("Successfully send");
-        }
-        console.log(data);
-      }
-    } catch (err) {
-      toast.error(err.message);
+    /* ------------------------------POST to Send Box -----------------------------*/
+    const message = "successfully Sent";
+    if (sendData.email !== null) {
+      await onSend(
+        sendData,
+        `${url}/${replacedSenderMail}sentMailbox.json`,
+        message
+      );
+      console.log("In sent bx");
+    }
+    /* ------------------------------POST to IndBox -----------------------------*/
+    const mail = email?.replace(/[@.]/g, "");
+
+    const indData = {
+      from: senderEmail,
+      subject: subject,
+      message: value,
+      read: true,
+    };
+
+    if (indData.from !== null) {
+      await onSend(indData, `${url}/${mail}indbox.json`);
     }
 
-    try {
-      const mail = email.replace(/[@.]/g, "");
-      const response = await fetch(
-        `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}indbox.json`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            from: senderEmail,
-            subject: subject,
-            message: value,
-            read: true,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      let data = await response;
-      console.log(data);
-    } catch (err) {
-      toast.error(err);
-    }
+    props.onHide();
   };
   useEffect(() => {
     editorValue(editorState.getCurrentContent().getPlainText());
@@ -103,7 +88,7 @@ function Compose(props) {
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
-        <div className="bg-secondary varient-dark">
+        <div className="bg-secondary variant-dark">
           <Modal.Header closeButton>
             <Modal.Title>Compose Mail</Modal.Title>
           </Modal.Header>

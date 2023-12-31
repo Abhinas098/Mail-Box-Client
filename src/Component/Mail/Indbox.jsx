@@ -3,31 +3,32 @@ import { Button, Card, ListGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { emailActions } from "../../store/email-slice";
 import { Link } from "react-router-dom";
-import Loader from "../Layout/Loader";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useApi from "../../hooks/useApi";
 
 const Indbox = () => {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.email.recieved);
 
   const [loader, setloader] = useState(false);
-  const [error, setError] = useState(false);
 
   const email = localStorage.getItem("email");
   const mail = email.replace(/[@.]/g, "");
 
+  const { onSend, onDelete } = useApi();
+
+  const url = "https://mail-box-ea204-default-rtdb.firebaseio.com";
+
   const GetData = useCallback(async () => {
     try {
       setloader(true);
-      let res = await fetch(
-        `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}indbox.json`
-      );
+      let res = await fetch(`${url}/${mail}indbox.json`);
+
       let data = await res.json();
       let arr = [];
       let unreadMsg = 0;
-      console.log(data);
 
       for (let key in data) {
         if (data[key].read === true) {
@@ -43,48 +44,26 @@ const Indbox = () => {
     } catch (err) {
       toast.error(err);
       setloader(false);
-      setError(true);
     }
   }, [mail, dispatch]);
 
   const DeleteHandler = async (val) => {
+    // Disable the button during the request
+    setloader(true);
+
     // post to trash
+    const msg = "Move to Trash";
     try {
-      const response = await fetch(
-        `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}trashMail.json`,
-        {
-          method: "POST",
-          body: JSON.stringify(val),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      let data = await response;
-      console.log(data);
-    } catch (err) {
-      toast.error(err.message);
-    }
+      await onSend(val, `${url}/${mail}trashMail.json`, msg);
 
-    // delete from inbox
-
-    try {
-      const res = await fetch(
-        `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}indbox/${val.id}.json`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      let data = await res;
-      console.log(data);
-      toast.success("Move to trash");
-      GetData();
+      // delete from inbox
+      await onDelete(`${url}/${mail}indbox/${val.id}.json`);
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      // Enable the button after the request is completed (success or failure)
+      setloader(false);
+      GetData();
     }
   };
 
@@ -118,12 +97,6 @@ const Indbox = () => {
       <Card className="scroll" bg="secondary">
         <h2 style={{ textAlign: "center" }}>Indbox</h2>
         <ListGroup>
-          {error && data.length === 0 && <h2>Something went wrong!</h2>}
-          {loader && data.length > 0 && (
-            <center>
-              <Loader />
-            </center>
-          )}
           {!loader &&
             data !== null &&
             data.length > 0 &&
@@ -157,14 +130,16 @@ const Indbox = () => {
                       {data[email].subject}
                     </span>
                   </Link>
-                  <Button
-                    onClick={() => DeleteHandler(data[email])}
-                    key={data[email].id}
-                    style={{ float: "right" }}
-                    variant="danger"
-                  >
-                    Delete
-                  </Button>
+                  {!loader && (
+                    <Button
+                      onClick={() => DeleteHandler(data[email])}
+                      key={data[email].id}
+                      style={{ float: "right" }}
+                      variant="danger"
+                    >
+                      Delete
+                    </Button>
+                  )}
                 </ListGroup.Item>
               );
             })}

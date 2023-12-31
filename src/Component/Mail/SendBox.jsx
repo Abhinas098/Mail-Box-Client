@@ -7,12 +7,15 @@ import Loader from "../Layout/Loader";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useApi from "../../hooks/useApi";
 
 const SendBox = () => {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.email.send);
 
   const [loader, setloader] = useState(false);
+  const { onDelete, deleteAll } = useApi();
+  const url = "https://mail-box-ea204-default-rtdb.firebaseio.com";
 
   const email = localStorage.getItem("email");
   const mail = email.replace(/[@.]/g, "");
@@ -20,46 +23,29 @@ const SendBox = () => {
   const GetData = useCallback(async () => {
     try {
       setloader(true);
-      let res = await fetch(
-        `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}sentMailbox.json`
-      );
+      let res = await fetch(`${url}/${mail}sentMailbox.json`);
       let data = await res.json();
-      let arr = [];
-      console.log(data);
-
-      for (let key in data) {
-        const id = key;
-        arr = [{ id: id, ...data[key] }, ...arr];
-
-        dispatch(emailActions.sendMail([...arr]));
-        setloader(false);
-      }
+      const arr = Object.entries(data || {}).map(([id, item]) => ({
+        id,
+        ...item,
+      }));
+      dispatch(emailActions.sendMail(arr));
+      setloader(false);
     } catch (err) {
       toast.error(err.message);
       setloader(false);
     }
   }, [mail, dispatch]);
 
+  // Remove one mail
   const DeleteHandler = async (id) => {
-    console.log(id);
-    try {
-      const res = await fetch(
-        `https://mail-box-ea204-default-rtdb.firebaseio.com/${mail}sentMailbox/${id}.json`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    await onDelete(`${url}/${mail}sentMailbox/${id}.json`, "Deleted");
+    GetData();
+  };
 
-      toast.success("Deleted");
-      let data = await res;
-      console.log(data);
-      GetData();
-    } catch (error) {
-      toast.error(error.message);
-    }
+  // Remove all Mail
+  const clearAll = async () => {
+    await deleteAll(`${url}/${mail}sentMailbox.json`, GetData);
   };
 
   useEffect(() => {
@@ -81,9 +67,22 @@ const SendBox = () => {
         theme="dark"
       />
       <Card className="scroll" bg="secondary">
-        <h2 style={{ textAlign: "center" }}>SendBox</h2>
+        <h2 style={{ textAlign: "center" }}>
+          {data.length > 0 && (
+            <Button
+              variant="danger"
+              size="sm"
+              className="trashBtn"
+              onClick={clearAll}
+            >
+              {" "}
+              ❌ Clear
+            </Button>
+          )}
+          SendBox
+        </h2>
         <ListGroup>
-          {loader && data.length > 0 && (
+          {loader && data.length > 0 && data[0] && (
             <center>
               <Loader />
             </center>

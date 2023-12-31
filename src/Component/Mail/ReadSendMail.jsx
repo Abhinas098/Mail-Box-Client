@@ -39,7 +39,7 @@ const ReadSendMail = () => {
         {!singleMail[0] && history.push("/sendmail")}
 
         <center>
-          <h1 onClick={() => history.push("/email")}>🔙</h1>
+          <h1 onClick={() => history.push("/sendmail")}>🔙</h1>
         </center>
       </Card>
     </Fragment>

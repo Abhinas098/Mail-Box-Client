@@ -4,23 +4,26 @@ import Loader from "../Layout/Loader";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Swal from "sweetalert2";
+
+import useApi from "../../hooks/useApi";
+import { useCallback } from "react";
 
 const TrashMail = () => {
   const mail = localStorage.getItem("email");
-  const email = mail.replace(/[@.]/g, "");
+  const email = mail ? mail.replace(/[@.]/g, "") : "";
 
   const [arr, setArr] = useState([]);
-
-  const [loader, setloader] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [error, setError] = useState(false);
 
-  const getTrash = async () => {
+  const { onDelete, deleteAll } = useApi();
+
+  const url = "https://mail-box-ea204-default-rtdb.firebaseio.com";
+
+  const getTrash = useCallback(async () => {
     try {
-      setloader(true);
-      const response = await fetch(
-        `https://mail-box-ea204-default-rtdb.firebaseio.com/${email}trashMail.json`
-      );
+      setLoader(true);
+      const response = await fetch(`${url}/${email}trashMail.json`);
       let data = await response.json();
       console.log(data);
       if (data) {
@@ -28,54 +31,32 @@ const TrashMail = () => {
         for (let i in data) {
           brr.push([i, data[i]]);
         }
-        setArr(...arr, brr);
+        setArr((prevArr) => [...prevArr, ...brr]);
       }
-      setloader(false);
+      setLoader(false);
     } catch (err) {
-      toast.error(err.message);
-      setloader(false);
+      setLoader(false);
       setError(true);
+      toast.error(err.message);
+    }
+  }, [email]);
+
+  const clearAll = async () => {
+    try {
+      await deleteAll(`${url}/${email}trashMail.json`, getTrash, setArr);
+    } catch (error) {
+      toast.error("Something went wrong");
     }
   };
 
-  console.log(arr);
-
-  const DeleteHandler = async (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const res = await fetch(
-            `https://mail-box-ea204-default-rtdb.firebaseio.com/${email}trashMail/${id}.json`,
-            {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          let data = await res;
-          console.log(data);
-          setArr(arr.filter((i) => i[0] !== id));
-          // toast.success("Deleted");
-          Swal.fire("Deleted!", "Your file has been deleted.", "success");
-        } catch (error) {
-          toast.error("Something went wrong");
-        }
-      }
-    });
+  const deleteHandler = async (id) => {
+    await onDelete(`${url}/${email}trashMail/${id}.json`, "Deleted");
+    setArr((prevArr) => prevArr.filter((i) => i[0] !== id));
   };
 
   useEffect(() => {
     getTrash();
-  }, []);
+  }, [getTrash]);
 
   return (
     <>
@@ -90,11 +71,24 @@ const TrashMail = () => {
         draggable
         pauseOnHover
         theme="dark"
-      />{" "}
+      />
       <Card className="scroll" bg="secondary">
-        <h2 style={{ textAlign: "center" }}>Trashbox</h2>
-        {error && arr.length === 0 && <h2>Something went wrong!</h2>}
-        {loader && (
+        <h2 style={{ textAlign: "center" }}>
+          TrashMail{" "}
+          {arr.length > 0 && (
+            <Button
+              variant="danger"
+              size="sm"
+              className="trashBtn"
+              onClick={clearAll}
+            >
+              {" "}
+              ❌ Clear
+            </Button>
+          )}
+        </h2>
+
+        {loader && !arr[0] && (
           <center>
             <Loader />
           </center>
@@ -105,46 +99,39 @@ const TrashMail = () => {
             arr[0] &&
             arr !== null &&
             arr.length > 0 &&
-            arr.map((email, index) => {
-              console.log(email);
-              return (
-                <>
-                  {email && (
-                    <ListGroup.Item
-                      key={index}
-                      className="bg-dark bg-gradient bg-opacity-50"
-                    >
-                      {email[1] && (
-                        <span>
-                          <b>From:</b> {email[1].from}
-                        </span>
-                      )}
-                      <br />
-                      {email[1] && (
-                        <span>
-                          <b>Subject:</b> {email[1].subject}
-                        </span>
-                      )}
-                      <br />
-                      {email[1] && (
-                        <span>
-                          <b>Message:</b> {email[1].message}
-                        </span>
-                      )}
+            arr.map((email) => (
+              <ListGroup.Item
+                key={email[0]}
+                className="bg-dark bg-gradient bg-opacity-50"
+              >
+                {email[1] && (
+                  <span>
+                    <b>From:</b> {email[1].from}
+                  </span>
+                )}
+                <br />
+                {email[1] && (
+                  <span>
+                    <b>Subject:</b> {email[1].subject}
+                  </span>
+                )}
+                <br />
+                {email[1] && (
+                  <span>
+                    <b>Message:</b> {email[1].message}
+                  </span>
+                )}
 
-                      <Button
-                        onClick={() => DeleteHandler(email[0])}
-                        key={email[0]}
-                        style={{ float: "right" }}
-                        variant="danger"
-                      >
-                        Delete
-                      </Button>
-                    </ListGroup.Item>
-                  )}
-                </>
-              );
-            })}
+                <Button
+                  onClick={() => deleteHandler(email[0])}
+                  key={email[0]}
+                  style={{ float: "right" }}
+                  variant="danger"
+                >
+                  Delete
+                </Button>
+              </ListGroup.Item>
+            ))}
         </ListGroup>
       </Card>
     </>
